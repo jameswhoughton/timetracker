@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Timetracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="main">
+        <table>
+            <thead>
+                <tr>
+                    <td>Description</td>
+                    <td>Start</td>
+                    <td>End</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="row in rows" :key="row.id">
+                    <td>{{ row.description }}</td>
+                    <td>{{ row.start }}</td>
+                    <td>{{ row.end }}</td>
+                    <td><button @click="destroyRow(row.id)">Delete</button></td>
+                </tr>
+                <tr>
+                    <td><input type="text"  name="description" value="" /></td>
+                    <td><timepicker/></td>
+                    <td><timepicker/></td>
+                    <td><button @click="addRow()">Add</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        Vue.component('timepicker', {
+            template: `<input type="time" />`
+        });
+        
+        const main = new Vue({
+            el: '#main',
+            data: {
+                rows: []
+            },
+            components: {
+                timepicker: 'timepicker'
+            },
+            methods: {
+                addRow() {
+                    console.log(this);
+                },
+                deleteRow() {
+
+                }
+            }
+        });
+    </script>
+</body>
+</html>
