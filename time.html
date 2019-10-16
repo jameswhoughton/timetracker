@@ -15,46 +15,92 @@
                     <td>Description</td>
                     <td>Start</td>
                     <td>End</td>
+                    <td>Total</td>
                     <td></td>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="row in rows" :key="row.id">
+                <tr v-for="(row, key) in rows" :key="key">
                     <td>{{ row.description }}</td>
                     <td>{{ row.start }}</td>
                     <td>{{ row.end }}</td>
-                    <td><button @click="destroyRow(row.id)">Delete</button></td>
+                    <td>{{ row.total }}</td>
+                    <td><button @click="deleteRow(key)">Delete</button></td>
                 </tr>
                 <tr>
-                    <td><input type="text"  name="description" value="" /></td>
-                    <td><timepicker/></td>
-                    <td><timepicker/></td>
+                    <td><input type="text" v-model="description" /></td>
+                    <td><input type="time" v-model="start" /></td>
+                    <td><input type="time" v-model="end" /></td>
                     <td><button @click="addRow()">Add</button></td>
                 </tr>
             </tbody>
         </table>
+        <table>
+            <thead>
+                <tr>
+                    <td>Description</td>
+                    <td>Total</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(total, description) in totals">
+                    <td>{{ description }}</td>
+                    <td>{{ format(total) }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <script>
-        Vue.component('timepicker', {
-            template: `<input type="time" />`
-        });
-        
+    <script> 
         const main = new Vue({
             el: '#main',
             data: {
-                rows: []
-            },
-            components: {
-                timepicker: 'timepicker'
+                rows: {'row-0': {description: '', start: '12:00', end: '14:22'}},
+                totals: {},
+                description: '',
+                start: '',
+                end: '',
+                index: 1
             },
             methods: {
                 addRow() {
-                    console.log(this);
-                },
-                deleteRow() {
+                    if(this.description && this.start && this.end) {
+                        const total = this.total(this.start, this.end);
+                        
+                        this.rows[`row-${this.index}`] = {
+                            description: this.description,
+                            start: this.start,
+                            end: this.end,
+                            total: this.format(total)
+                        };
 
+                        if(!this.totals[this.description]) {
+                            this.totals[this.description] = total;
+                        } else {
+                            this.totals[this.description] += total;
+                        }
+
+                        this.description = '';
+                        this.start = '';
+                        this.end = '';
+
+                        this.index++;
+                    }
+                },
+                deleteRow(id) {
+                    Vue.delete(this.rows, id);
+                },
+                total(start, end) {
+                    const startTime = start.split(':');
+                    const endTime = end.split(':');
+                    const startTotal = parseInt(startTime[0] * 60) + parseInt(startTime[1]);
+                    const endTotal = parseInt(endTime[0]) * 60 + parseInt(endTime[1]);
+                    
+                    return  endTotal - startTotal;
+                },
+                format(time) {
+                    return `${Math.round(time / 60)}:${time % 60}`;
                 }
-            }
+            },
         });
     </script>
 </body>
