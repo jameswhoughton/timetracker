@@ -6,75 +6,91 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Timetracker</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
     <div id="main">
-        <table>
-            <thead>
-                <tr>
-                    <td>Description</td>
-                    <td>Start</td>
-                    <td>End</td>
-                    <td>Total</td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(row, key) in rows" :key="key">
-                    <td>{{ row.description }}</td>
-                    <td>{{ row.start }}</td>
-                    <td>{{ row.end }}</td>
-                    <td>{{ row.total }}</td>
-                    <td><button @click="deleteRow(key)">Delete</button></td>
-                </tr>
-                <tr>
-                    <td><input type="text" v-model="description" /></td>
-                    <td><input type="time" v-model="start" /></td>
-                    <td><input type="time" v-model="end" /></td>
-                    <td><button @click="addRow()">Add</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <table>
-            <thead>
-                <tr>
-                    <td>Description</td>
-                    <td>Total</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(total, description) in totals">
-                    <td>{{ description }}</td>
-                    <td>{{ format(total) }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(row, key) in rows" :key="key">
+                                <td>{{ row.description }}</td>
+                                <td>{{ row.start }}</td>
+                                <td>{{ row.end }}</td>
+                                <td>{{ format(row.total) }}</td>
+                                <td><button class="btn btn-danger" @click="deleteRow(key)">Delete</button></td>
+                            </tr>
+                            <tr>
+                                <td><input class="form-control" type="text" v-model="description" /></td>
+                                <td><input class="form-control" type="time" v-model="start" /></td>
+                                <td><input class="form-control" type="time" v-model="end" /></td>
+                                <td></td>
+                                <td><button class="btn btn-success" @click="addRow()">Add</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-3">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(total, description) in totals">
+                                <td>{{ description }}</td>
+                                <td>{{ format(total) }}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="font-weight-bold">
+                            <tr>
+                                <td>Total</td>
+                                <td>{{ format(totalTime) }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
     <script> 
         const main = new Vue({
             el: '#main',
             data: {
-                rows: {'row-0': {description: '', start: '12:00', end: '14:22'}},
+                rows: {},
                 totals: {},
                 description: '',
                 start: '',
                 end: '',
-                index: 1
+                index: 0
             },
             methods: {
                 addRow() {
-                    if(this.description && this.start && this.end) {
+                    if(this.valid()) {
                         const total = this.total(this.start, this.end);
                         
                         this.rows[`row-${this.index}`] = {
                             description: this.description,
                             start: this.start,
                             end: this.end,
-                            total: this.format(total)
+                            total: total
                         };
 
                         if(!this.totals[this.description]) {
-                            this.totals[this.description] = total;
+                            Vue.set(this.totals, this.description, total);
                         } else {
                             this.totals[this.description] += total;
                         }
@@ -87,6 +103,11 @@
                     }
                 },
                 deleteRow(id) {
+                    const totalsKey = this.rows[id].description;
+                    this.totals[totalsKey] -= this.rows[id].total;
+                    if(this.totals[totalsKey] == 0) {
+                        Vue.delete(this.totals, totalsKey);
+                    }
                     Vue.delete(this.rows, id);
                 },
                 total(start, end) {
@@ -98,9 +119,25 @@
                     return  endTotal - startTotal;
                 },
                 format(time) {
-                    return `${Math.round(time / 60)}:${time % 60}`;
+                    return `${Math.round(time / 60).toString().padStart(2, 0)}:${(time % 60).toString().padStart(2, 0)}`;
+                },
+                valid() {
+                    if(!this.description || !this.start || !this.end) {
+                        alert('Provide description, start and end times.');
+                        return 0;
+                    }
+                    if(this.start > this.end) {
+                        alert('Start time must be before end time.');
+                        return 0;
+                    }
+                    return 1;
                 }
             },
+            computed: {
+                totalTime() {
+                    return Object.values(this.totals).reduce((a, b) => a + b, 0);
+                }
+            }
         });
     </script>
 </body>
