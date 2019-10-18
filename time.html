@@ -77,17 +77,22 @@
                 end: '',
                 index: 0
             },
+            mounted() {
+                this.rows = JSON.parse(window.localStorage.getItem('rows')) || {};
+                this.index = this.rows.length;
+                this.totals = JSON.parse(window.localStorage.getItem('totals')) || {};
+            },
             methods: {
                 addRow() {
                     if(this.valid()) {
                         const total = this.total(this.start, this.end);
                         
-                        this.rows[`row-${this.index}`] = {
+                        Vue.set(this.rows, `row-${this.index}`, {
                             description: this.description,
                             start: this.start,
                             end: this.end,
                             total: total
-                        };
+                        });
 
                         if(!this.totals[this.description]) {
                             Vue.set(this.totals, this.description, total);
@@ -98,6 +103,9 @@
                         this.description = '';
                         this.start = '';
                         this.end = '';
+
+                        window.localStorage.setItem('rows', JSON.stringify(this.rows));
+                        window.localStorage.setItem('totals', JSON.stringify(this.totals));
 
                         this.index++;
                     }
