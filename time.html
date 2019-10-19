@@ -36,7 +36,10 @@
                                 <td><input class="form-control" type="time" v-model="start" /></td>
                                 <td><input class="form-control" type="time" v-model="end" /></td>
                                 <td></td>
-                                <td><button class="btn btn-success" @click="addRow()">Add</button></td>
+                                <td>
+                                    <button class="btn btn-success" @click="addRow()">Add</button>
+                                    <button class="btn btn-danger" v-if="index" @click="clear()">Clear All</button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -79,7 +82,7 @@
             },
             mounted() {
                 this.rows = JSON.parse(window.localStorage.getItem('rows')) || {};
-                this.index = this.rows.length;
+                this.index = Object.keys(this.rows).length;
                 this.totals = JSON.parse(window.localStorage.getItem('totals')) || {};
             },
             methods: {
@@ -104,8 +107,7 @@
                         this.start = '';
                         this.end = '';
 
-                        window.localStorage.setItem('rows', JSON.stringify(this.rows));
-                        window.localStorage.setItem('totals', JSON.stringify(this.totals));
+                        this.save();
 
                         this.index++;
                     }
@@ -139,6 +141,17 @@
                         return 0;
                     }
                     return 1;
+                },
+                clear() {
+                    this.rows = {};
+                    this.totals = {};
+                    this.index = 0;
+
+                    this.save();
+                },
+                save() {
+                    window.localStorage.setItem('rows', JSON.stringify(this.rows));
+                    window.localStorage.setItem('totals', JSON.stringify(this.totals));
                 }
             },
             computed: {
