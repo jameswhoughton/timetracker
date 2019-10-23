@@ -38,7 +38,7 @@
                                 <td></td>
                                 <td>
                                     <button class="btn btn-success" @click="addRow()">Add</button>
-                                    <button class="btn btn-danger" v-if="index" @click="clear()">Clear All</button>
+                                    <button class="btn btn-danger" v-if="Object.keys(rows).length" @click="clear()">Clear All</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -77,20 +77,19 @@
                 totals: {},
                 description: '',
                 start: '',
-                end: '',
-                index: 0
+                end: ''
             },
             mounted() {
                 this.rows = JSON.parse(window.localStorage.getItem('rows')) || {};
-                this.index = Object.keys(this.rows).length;
                 this.totals = JSON.parse(window.localStorage.getItem('totals')) || {};
             },
             methods: {
                 addRow() {
                     if(this.valid()) {
                         const total = this.total(this.start, this.end);
+                        const key = Date.now();
                         
-                        Vue.set(this.rows, `row-${this.index}`, {
+                        Vue.set(this.rows, `row-${key}`, {
                             description: this.description,
                             start: this.start,
                             end: this.end,
@@ -108,8 +107,6 @@
                         this.end = '';
 
                         this.save();
-
-                        this.index++;
                     }
                 },
                 deleteRow(id) {
@@ -119,6 +116,8 @@
                         Vue.delete(this.totals, totalsKey);
                     }
                     Vue.delete(this.rows, id);
+
+                    this.save();
                 },
                 total(start, end) {
                     const startTime = start.split(':');
@@ -129,7 +128,7 @@
                     return  endTotal - startTotal;
                 },
                 format(time) {
-                    return `${Math.round(time / 60).toString().padStart(2, 0)}:${(time % 60).toString().padStart(2, 0)}`;
+                    return `${Math.floor(time / 60).toString().padStart(2, 0)}:${(time % 60).toString().padStart(2, 0)}`;
                 },
                 valid() {
                     if(!this.description || !this.start || !this.end) {
@@ -145,7 +144,6 @@
                 clear() {
                     this.rows = {};
                     this.totals = {};
-                    this.index = 0;
 
                     this.save();
                 },
