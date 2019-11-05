@@ -25,11 +25,14 @@
                         </thead>
                         <tbody>
                             <tr v-for="(row, key) in rows" :key="key">
-                                <td>{{ row.description }}</td>
-                                <td>{{ row.start }}</td>
-                                <td>{{ row.end }}</td>
+                                <td><input class="form-control" type="text" v-model="row.description" /></td>
+                                <td><input class="form-control" type="time" v-model="row.start" /></td>
+                                <td><input class="form-control" type="time" v-model="row.end" /></td>
                                 <td>{{ format(row.total) }}</td>
-                                <td><button class="btn btn-danger" @click="deleteRow(key)">Delete</button></td>
+                                <td>
+                                    <button class="btn btn-primary" @click="updateRow(key)">Update</button>
+                                    <button class="btn btn-danger" @click="deleteRow(key)">Delete</button>
+                                </td>
                             </tr>
                             <tr>
                                 <td><input class="form-control" type="text" v-model="description" /></td>
@@ -117,6 +120,19 @@
                     }
                     Vue.delete(this.rows, id);
 
+                    this.save();
+                },
+                updateRow(key) {
+                    this.rows[key].total = this.total(this.rows[key].start, this.rows[key].end);
+                    const targetDescription = this.rows[key].description;
+
+                    this.totals[targetDescription] = Object.values(this.rows).reduce((acc, row) => {
+                        if(row.description == targetDescription) {
+                            return acc += row.total
+                        }
+                    }, 0);
+                    
+                    
                     this.save();
                 },
                 total(start, end) {
