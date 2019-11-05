@@ -99,11 +99,7 @@
                             total: total
                         });
 
-                        if(!this.totals[this.description]) {
-                            Vue.set(this.totals, this.description, total);
-                        } else {
-                            this.totals[this.description] += total;
-                        }
+                        this.calculateTotals();
 
                         this.description = '';
                         this.start = '';
@@ -113,27 +109,30 @@
                     }
                 },
                 deleteRow(id) {
-                    const totalsKey = this.rows[id].description;
-                    this.totals[totalsKey] -= this.rows[id].total;
-                    if(this.totals[totalsKey] == 0) {
-                        Vue.delete(this.totals, totalsKey);
-                    }
                     Vue.delete(this.rows, id);
+
+                    this.calculateTotals();
 
                     this.save();
                 },
                 updateRow(key) {
                     this.rows[key].total = this.total(this.rows[key].start, this.rows[key].end);
-                    const targetDescription = this.rows[key].description;
 
-                    this.totals[targetDescription] = Object.values(this.rows).reduce((acc, row) => {
-                        if(row.description == targetDescription) {
-                            return acc += row.total
-                        }
-                    }, 0);
-                    
-                    
+                    this.calculateTotals();
+                                       
                     this.save();
+                },
+                calculateTotals() {
+                    let totals = {};
+                    for(let [key, row] of Object.entries(this.rows)) {
+                        if(!totals[row.description]) {
+                            totals[row.description] = row.total;
+                        } else {
+                            totals[row.description] += row.total;
+                        }
+                    };
+
+                    this.totals = totals;
                 },
                 total(start, end) {
                     const startTime = start.split(':');
