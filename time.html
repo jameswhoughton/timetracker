@@ -24,13 +24,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(row, key) in rows" :key="key">
+                            <tr v-for="(row, key) in rows" :key="key" @change="updateRow(key)">
                                 <td><input class="form-control" type="text" v-model="row.description" /></td>
                                 <td><input class="form-control" type="time" v-model="row.start" /></td>
                                 <td><input class="form-control" type="time" v-model="row.end" /></td>
                                 <td>{{ format(row.total) }}</td>
                                 <td>
-                                    <button class="btn btn-primary" @click="updateRow(key)">Update</button>
                                     <button class="btn btn-danger" @click="deleteRow(key)">Delete</button>
                                 </td>
                             </tr>
@@ -88,7 +87,7 @@
             },
             methods: {
                 addRow() {
-                    if(this.valid()) {
+                    if(this.valid(this)) {
                         const total = this.total(this.start, this.end);
                         const key = Date.now();
                         
@@ -116,11 +115,13 @@
                     this.save();
                 },
                 updateRow(key) {
-                    this.rows[key].total = this.total(this.rows[key].start, this.rows[key].end);
+                    if(this.valid(this.rows[key])) {
+                        this.rows[key].total = this.total(this.rows[key].start, this.rows[key].end);
 
-                    this.calculateTotals();
-                                       
-                    this.save();
+                        this.calculateTotals();
+                                        
+                        this.save();
+                    }
                 },
                 calculateTotals() {
                     let totals = {};
@@ -145,12 +146,12 @@
                 format(time) {
                     return `${Math.floor(time / 60).toString().padStart(2, 0)}:${(time % 60).toString().padStart(2, 0)}`;
                 },
-                valid() {
-                    if(!this.description || !this.start || !this.end) {
+                valid(row) {
+                    if(!row.description || !row.start || !row.end) {
                         alert('Provide description, start and end times.');
                         return 0;
                     }
-                    if(this.start > this.end) {
+                    if(row.start > row.end) {
                         alert('Start time must be before end time.');
                         return 0;
                     }
