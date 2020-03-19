@@ -144,17 +144,14 @@
                     return  endTotal - startTotal;
                 },
                 format(time) {
-                    return `${Math.floor(time / 60).toString().padStart(2, 0)}:${(time % 60).toString().padStart(2, 0)}`;
+                    return `${Math.floor(time / 60).toString().padStart(2, 0)}:${Math.abs(time % 60).toString().padStart(2, 0)}`;
                 },
                 valid(row) {
                     if(!row.description || !row.start || !row.end) {
                         alert('Provide description, start and end times.');
                         return 0;
                     }
-                    if(row.start > row.end) {
-                        alert('Start time must be before end time.');
-                        return 0;
-                    }
+
                     return 1;
                 },
                 clear() {
