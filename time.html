@@ -51,19 +51,19 @@
                         <thead>
                             <tr>
                                 <th>Description</th>
-                                <th>Total</th>
+                                <th>Total (rounded)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(total, description) in totals">
                                 <td>{{ description }}</td>
-                                <td>{{ format(total) }}</td>
+                                <td>{{ format(roundTime(total)) }}</td>
                             </tr>
                         </tbody>
                         <tfoot class="font-weight-bold">
                             <tr>
                                 <td>Total</td>
-                                <td>{{ format(totalTime) }}</td>
+                                <td>{{ totalTime }}</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -163,12 +163,17 @@
                 save() {
                     window.localStorage.setItem('rows', JSON.stringify(this.rows));
                     window.localStorage.setItem('totals', JSON.stringify(this.totals));
+                },
+                roundTime(time) {
+                    return 15 * Math.round(time / 15);
                 }
             },
             computed: {
                 totalTime() {
-                    return Object.values(this.totals).reduce((a, b) => a + b, 0);
-                }
+                    const totalTime = Object.values(this.totals).reduce((a, b) => a + b, 0);
+
+                    return this.format(this.roundTime(totalTime));
+                },
             }
         });
     </script>
