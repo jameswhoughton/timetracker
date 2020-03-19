@@ -51,7 +51,7 @@
                         <thead>
                             <tr>
                                 <th>Description</th>
-                                <th>Total (rounded)</th>
+                                <th>Rounded Total</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -155,10 +155,12 @@
                     return 1;
                 },
                 clear() {
-                    this.rows = {};
-                    this.totals = {};
+                    if(confirm('Are you sure?')) {
+                        this.rows = {};
+                        this.totals = {};
 
-                    this.save();
+                        this.save();
+                    }
                 },
                 save() {
                     window.localStorage.setItem('rows', JSON.stringify(this.rows));
