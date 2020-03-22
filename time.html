@@ -172,9 +172,9 @@
             },
             computed: {
                 totalTime() {
-                    const totalTime = Object.values(this.totals).reduce((a, b) => a + b, 0);
+                    const totalTime = Object.values(this.totals).reduce((a, b) => a + this.roundTime(b), 0);
 
-                    return this.format(this.roundTime(totalTime));
+                    return this.format(totalTime);
                 },
             }
         });
