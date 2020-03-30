@@ -1,17 +1,74 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <time-row v-for="id in ids" :key="`time-row-${id}`" :id="id"></time-row>
+            <time-form></time-form>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-3">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Rounded Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(total, description) in totals" :key="`total-${description}`">
+              <td>{{ description }}</td>
+              <td><Time :time="total" :round="true" /></td>
+            </tr>
+          </tbody>
+          <tfoot class="font-weight-bold">
+            <tr>
+              <td>Total</td>
+              <td><Time :time="totalTime" /></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TimeRow from './components/TimeRow.vue'
+import TimeForm from './components/TimeForm.vue'
+import Time from './components/Time.vue'
+
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
+    TimeRow,
+    TimeForm,
+    Time,
+  },
+
+  computed: {
+    ...mapGetters({
+      ids: 'times/ids',
+      totals: 'times/totals',
+    }),
+
+    totalTime() {
+      return Object.values(this.totals).reduce((a, b) => a + b, 0)
+    }
   }
 }
 </script>

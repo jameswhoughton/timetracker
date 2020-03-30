@@ -1,49 +1,66 @@
-const state  = {
-  times: [],
+import Vue from 'vue'
+
+const state = {
+  times: {},
 }
 
 const getters = {
-  times(state, getters, rootState) {
-    return state.times
-  }
+  ids(state) {
+    return Object.keys(state.times)
+  },
+
+  totals(state) {
+    const totals = {}
+
+    Object.values(state.times).forEach(time => {
+      if(typeof totals[time.description] === 'undefined') {
+        totals[time.description] = 0
+      }
+
+      totals[time.description] += time.total
+    })
+
+    return totals
+  },
 }
 
 const actions = {
-  addTime({ state, commit }, time) {
-    const key = Date.now();
-    time.total = this.total(time.start, time.end);
+  addTime({ commit }, time) {
+    const id = Date.now();
+    time.total = total(time.start, time.end);
 
-    commit('pushTime', {
-      key,
-      time,
-    })
+    commit('setTime', { id, time })
   }
 }
 
 const mutations = {
-  pushTime(state, time) {
-    state.times.push(time)
+  setTime(state, data) {
+    Vue.set(state.times, data.id, data.time)
   },
 
-  updateTime(state, time) {
-    const index = state.times.findIndex(row => row.key === time.key)
-
-    if(index) {
-      state.times[index] = time
-    }
+  deleteTime(state, id) {
+    Vue.delete(state.times, id)
   },
 
-  deleteTime(state, key) {
-    const index = state.times.findIndex(row => row.key === key)
-
-    if(index) {
-      state.times = [...state.times].splice(index, 1)
+  setValue(state, { id, type, value }) {
+    Vue.set(state.times[id], type, value)
+    if(type === 'start' || type === 'end') {
+      Vue.set(state.times[id], 'total', total(state.times[id].start, state.times[id].end))
     }
   },
 
   setTimes(state, times) {
     state.times = times
   }
+}
+
+const total = (start, end) => {
+  const startTime = start.split(':')
+  const endTime = end.split(':')
+  const startTotal = parseInt(startTime[0] * 60) + parseInt(startTime[1])
+  const endTotal = parseInt(endTime[0]) * 60 + parseInt(endTime[1])
+  
+  return  endTotal - startTotal;
 }
 
 export default {
