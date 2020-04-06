@@ -22,6 +22,16 @@ const getters = {
 
     return totals
   },
+
+  roundedTotals(state, getters) {
+    const totals = {...getters['totals']}
+
+    for(const description in totals) {
+      totals[description] = roundTime(totals[description])
+    }
+
+    return totals
+  }
 }
 
 const actions = {
@@ -51,7 +61,7 @@ const mutations = {
 
   setTimes(state, times) {
     state.times = times
-  }
+  },
 }
 
 const total = (start, end) => {
@@ -61,6 +71,10 @@ const total = (start, end) => {
   const endTotal = parseInt(endTime[0]) * 60 + parseInt(endTime[1])
   
   return  endTotal - startTotal;
+}
+
+const roundTime = (time) => {
+  return 15 * Math.round(time / 15);
 }
 
 export default {

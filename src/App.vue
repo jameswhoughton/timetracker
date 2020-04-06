@@ -27,9 +27,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(total, description) in totals" :key="`total-${description}`">
+            <tr v-for="(total, description) in roundedTotals" :key="`total-${description}`">
               <td>{{ description }}</td>
-              <td><Time :time="total" :round="true" /></td>
+              <td><Time :time="total" /></td>
             </tr>
           </tbody>
           <tfoot class="font-weight-bold">
@@ -64,10 +64,11 @@ export default {
     ...mapGetters({
       ids: 'times/ids',
       totals: 'times/totals',
+      roundedTotals: 'times/roundedTotals'
     }),
 
     totalTime() {
-      return Object.values(this.totals).reduce((a, b) => a + b, 0)
+      return Object.values(this.roundedTotals).reduce((a, b) => a + b, 0)
     }
   }
 }
