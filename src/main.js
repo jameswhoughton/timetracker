@@ -14,7 +14,16 @@ Vue.use(Vuex)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
+store.subscribe((mutation, state) => {
+  window.localStorage.setItem('times', JSON.stringify(state.times.times));
+})
+
 new Vue({
   render: h => h(App),
   store,
+  beforeCreate() {
+		const times = JSON.parse(window.localStorage.getItem('times')) || {};
+
+    this.$store.commit('times/setTimes', times)
+	},
 }).$mount('#app')
