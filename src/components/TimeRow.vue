@@ -30,10 +30,10 @@ export default {
   computed: {
     description: {
       get() {
-        return this.$store.state.times.times[this.id].description
+        return this.$store.state.times[this.id].description
       },
       set(value) {
-        this.$store.commit('times/setValue', {
+        this.$store.commit('setValue', {
           id: this.id,
           type: 'description',
           value,
@@ -43,10 +43,10 @@ export default {
 
     start: {
       get() {
-        return this.$store.state.times.times[this.id].start
+        return this.$store.state.times[this.id].start
       },
       set(value) {
-        this.$store.commit('times/setValue', {
+        this.$store.commit('setValue', {
           id: this.id,
           type: 'start',
           value,
@@ -56,10 +56,10 @@ export default {
 
     end: {
       get() {
-        return this.$store.state.times.times[this.id].end
+        return this.$store.state.times[this.id].end
       },
       set(value) {
-        this.$store.commit('times/setValue', {
+        this.$store.commit('setValue', {
           id: this.id,
           type: 'end',
           value,
@@ -79,7 +79,7 @@ export default {
 
   methods: {
     deleteTime() {
-      this.$store.commit('times/deleteTime', this.id)
+      this.$store.commit('deleteTime', this.id)
     },
   }
 }

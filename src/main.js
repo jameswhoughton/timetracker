@@ -15,7 +15,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 
 store.subscribe((mutation, state) => {
-  window.localStorage.setItem('times', JSON.stringify(state.times.times));
+  window.localStorage.setItem('times', JSON.stringify(state.times));
 })
 
 new Vue({
@@ -24,6 +24,6 @@ new Vue({
   beforeCreate() {
 		const times = JSON.parse(window.localStorage.getItem('times')) || {};
 
-    this.$store.commit('times/setTimes', times)
+    this.$store.commit('setTimes', times)
 	},
 }).$mount('#app')

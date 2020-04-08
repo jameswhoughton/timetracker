@@ -62,9 +62,9 @@ export default {
 
   computed: {
     ...mapGetters({
-      ids: 'times/ids',
-      totals: 'times/totals',
-      roundedTotals: 'times/roundedTotals'
+      ids: 'ids',
+      totals: 'totals',
+      roundedTotals: 'roundedTotals'
     }),
 
     totalTime() {
