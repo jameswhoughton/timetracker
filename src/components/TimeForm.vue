@@ -4,8 +4,9 @@
     <td><input class="form-control" type="time" v-model="start" /></td>
     <td><input class="form-control" type="time" v-model="end" /></td>
     <td></td>
-    <td>
+    <td class="btn-group">
         <button class="btn btn-success" @click="addTime()">Add</button>
+        <button v-show="Object.keys(this.$store.state.times.times).length" class="btn btn-danger ml-1" @click="clearTimes()">Clear</button>
     </td>
   </tr>
 </template>
@@ -34,6 +35,12 @@ export default {
         this.start = ""
         this.end = ""
         this.description = ""
+      }
+    },
+
+    clearTimes() {
+      if(confirm('Are you sure?')) {
+        this.$store.commit('times/setTimes', {})
       }
     },
 
