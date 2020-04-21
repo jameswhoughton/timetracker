@@ -23,19 +23,22 @@
           <thead>
             <tr>
               <th>Description</th>
+              <th>Total</th>
               <th>Rounded Total</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(total, description) in roundedTotals" :key="`total-${description}`">
               <td>{{ description }}</td>
-              <td><Time :time="total" /></td>
+              <td><Time :time="total.total" /></td>
+              <td><Time :time="total.rounded" /></td>
             </tr>
           </tbody>
           <tfoot class="font-weight-bold">
             <tr>
               <td>Total</td>
-              <td><Time :time="totalTime" /></td>
+              <td><Time :time="totalTime('total')" /></td>
+              <td><Time :time="totalTime('rounded')" /></td>
             </tr>
           </tfoot>
         </table>
@@ -66,9 +69,14 @@ export default {
       totals: 'totals',
       roundedTotals: 'roundedTotals'
     }),
+  },
 
-    totalTime() {
-      return Object.values(this.roundedTotals).reduce((a, b) => a + b, 0)
+  methods: {
+    totalTime(type) {
+      console.log(Object.values(this.roundedTotals))
+      return Object.values(this.roundedTotals)
+        .map(row => row[type])
+        .reduce((a, b) => a + b, 0)
     }
   }
 }

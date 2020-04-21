@@ -31,7 +31,10 @@ export default new Vuex.Store({
       const totals = {...getters['totals']}
   
       for(const description in totals) {
-        totals[description] = roundTime(totals[description])
+        totals[description] = {
+          total: totals[description],
+          rounded: roundTime(totals[description]),
+        }
       }
   
       return totals
