@@ -3,7 +3,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import store from './store'
 import Vuex from 'vuex'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faPlay, faStop, faUndo } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faStop, faUndo, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -13,7 +13,7 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
-library.add(faPlay, faStop, faUndo)
+library.add(faPlay, faStop, faUndo, faPlus, faTimes)
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 

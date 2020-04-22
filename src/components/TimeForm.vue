@@ -13,15 +13,14 @@
         <button 
           v-show="this.start && !this.end" 
           class="btn btn-danger" 
-          @click="setNowTime('end')"
+          @click="stop()"
         ><font-awesome-icon icon="stop" /></button>
         <button 
           v-show="this.start && this.end" 
           class="btn btn-warning" 
           @click="reset()"
         ><font-awesome-icon icon="undo" /></button>
-        <button v-show="valid()" class="btn btn-success ml-1" @click="addTime()">Add</button>
-        <button v-show="Object.keys(this.$store.state.times).length" class="btn btn-danger ml-1" @click="clearTimes()">Clear</button>
+        <button class="btn btn-success ml-1" @click="addTime()"><font-awesome-icon icon="plus" /></button>
     </td>
   </tr>
 </template>
@@ -46,27 +45,24 @@ export default {
 
   methods: {
     addTime() {
-      if(this.valid()) {
-        this.$store.dispatch('addTime', {
-          description: this.description,
-          start: this.start,
-          end: this.end,
-        })
-
-        this.reset()
+      if(!this.valid()) {
+        alert('Description, start and end time required.')
+        return
       }
+
+      this.$store.dispatch('addTime', {
+        description: this.description,
+        start: this.start,
+        end: this.end,
+      })
+
+      this.reset()
     },
 
     reset() {
       this.start = ""
       this.end = ""
       this.description = ""
-    },
-
-    clearTimes() {
-      if(confirm('Are you sure?')) {
-        this.$store.commit('setTimes', {})
-      }
     },
 
     valid() {
@@ -83,6 +79,14 @@ export default {
       const minutes = time.getMinutes().toString().padStart(2, "0")
 
       this[type] = `${hours}:${minutes}`
+    },
+
+    stop() {
+      this.setNowTime('end')
+      
+      if(this.valid()) {
+        this.addTime()
+      }
     }
   }
 }

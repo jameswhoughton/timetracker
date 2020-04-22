@@ -5,7 +5,7 @@
     <td><input class="form-control" type="time" v-model="end" /></td>
     <td><Time :time="total" /></td>
     <td>
-        <button class="btn btn-danger" @click="deleteTime()">Delete</button>
+        <button class="btn btn-danger" @click="deleteTime()"><font-awesome-icon icon="times" /></button>
     </td>
   </tr>
 </template>
