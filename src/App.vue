@@ -42,6 +42,7 @@
             </tr>
           </tfoot>
         </table>
+        <button v-show="Object.keys(this.$store.state.times).length" class="btn btn-danger w-100 mb-3" @click="clearTimes()">Clear All</button>
       </div>
     </div>
   </div>
@@ -73,11 +74,16 @@ export default {
 
   methods: {
     totalTime(type) {
-      console.log(Object.values(this.roundedTotals))
       return Object.values(this.roundedTotals)
         .map(row => row[type])
         .reduce((a, b) => a + b, 0)
-    }
+    },
+
+    clearTimes() {
+      if(confirm('Are you sure?')) {
+        this.$store.commit('setTimes', {})
+      }
+    },
   }
 }
 </script>
