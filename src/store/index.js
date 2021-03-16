@@ -82,5 +82,8 @@ const total = (start, end) => {
 }
 
 const roundTime = (time) => {
+  // Always round up for the first 15 mins.
+  if(time < 15) { return 15 }
+
   return 15 * Math.round(time / 15);
 }
