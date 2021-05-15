@@ -5,18 +5,14 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    times: {},
+    times: [],
   },
 
   getters: {
-    ids(state) {
-      return Object.keys(state.times)
-    },
-  
     totals(state) {
       const totals = {}
   
-      Object.values(state.times).forEach(time => {
+      state.times.forEach(time => {
         if(typeof totals[time.description] === 'undefined') {
           totals[time.description] = 0
         }
@@ -42,30 +38,38 @@ export default new Vuex.Store({
   },
 
   actions: {
-    addTime({ commit }, time) {
-      const id = Date.now();
-      time.total = total(time.start, time.end);
-  
-      commit('setTime', { id, time })
+    addTime({ state, commit }, time) {
+      const times = state.times
+      
+      time.total = total(time.start, time.end)
+      
+      times.push(time)
+
+      commit('setTimes', times)
+    },
+
+    updateTime({ state, commit }, { index, time }) {
+      const times = state.times
+      
+      if(times[index]) {
+        times[index] = time
+      }
+
+      commit('setTimes', times)
+    },
+    
+    deleteTime({ state, commit }, index) {
+      const times = state.times
+      
+      if(times[index]) {
+        times.splice(index, 1)
+      }
+
+      commit('setTimes', times)
     }
   },
 
   mutations: {
-    setTime(state, data) {
-      Vue.set(state.times, data.id, data.time)
-    },
-  
-    deleteTime(state, id) {
-      Vue.delete(state.times, id)
-    },
-  
-    setValue(state, { id, type, value }) {
-      Vue.set(state.times[id], type, value)
-      if(type === 'start' || type === 'end') {
-        Vue.set(state.times[id], 'total', total(state.times[id].start, state.times[id].end))
-      }
-    },
-  
     setTimes(state, times) {
       state.times = times
     },

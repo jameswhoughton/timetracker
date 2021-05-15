@@ -1,73 +1,85 @@
 <template>
   <tr>
-    <td><input class="form-control" type="text" v-model="description" /></td>
-    <td><input class="form-control" type="time" v-model="start" /></td>
-    <td><input class="form-control" type="time" v-model="end" /></td>
+    <td><Input v-model="description" /></td>
+    <td><Input type="time" v-model="start" /></td>
+    <td><Input type="time" v-model="end" /></td>
     <td><Time :time="total" /></td>
-    <td>
-        <button class="btn btn-danger" @click="deleteTime()"><font-awesome-icon icon="times" /></button>
+    <td class="action">
+        <slot>
+
+        </slot>
     </td>
   </tr>
 </template>
 
 <script>
-import Time from './Time.vue'
+import Time from './Time'
+import Input from './Input'
 
 export default {
   name: 'TimeRow',
 
   components: {
     Time,
+    Input,
   },
 
   props: {
-    id: {
-      type: String,
-      required: true,
+    time: {
+      type: Object,
+      default: () => {
+        return {
+          description: '',
+          start: '',
+          end: '',
+        }
+      },
     }
   },
 
   computed: {
     description: {
       get() {
-        return this.$store.state.times[this.id].description
+        return this.time.description
       },
-      set(value) {
-        this.$store.commit('setValue', {
-          id: this.id,
-          type: 'description',
-          value,
+      set(val) {
+        this.$emit('change', {
+          description: val,
+          start: this.start,
+          end: this.end,
         })
       }
     },
 
     start: {
       get() {
-        return this.$store.state.times[this.id].start
+        return this.time.start
       },
-      set(value) {
-        this.$store.commit('setValue', {
-          id: this.id,
-          type: 'start',
-          value,
+      set(val) {
+        this.$emit('change', {
+          description: this.description,
+          start: val,
+          end: this.end,
         })
       }
     },
 
     end: {
       get() {
-        return this.$store.state.times[this.id].end
+        return this.time.end
       },
-      set(value) {
-        this.$store.commit('setValue', {
-          id: this.id,
-          type: 'end',
-          value,
+      set(val) {
+        this.$emit('change', {
+          description: this.description,
+          start: this.start,
+          end: val,
         })
       }
     },
     
     total() {
+      if(!this.state && !this.end) { return ' '}
+      
       const startTime = this.start.split(':');
       const endTime = this.end.split(':');
       const startTotal = parseInt(startTime[0] * 60) + parseInt(startTime[1]);
@@ -76,11 +88,11 @@ export default {
       return  endTotal - startTotal;
     }
   },
-
-  methods: {
-    deleteTime() {
-      this.$store.commit('deleteTime', this.id)
-    },
-  }
 }
 </script>
+
+<style scoped>
+.action {
+  width: 160px;
+}
+</style>

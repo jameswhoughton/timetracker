@@ -7,13 +7,15 @@ export default {
   name: 'Time',
   props: {
     time: {
-      type: Number,
+      type: [Number, String],
       required: true,
     }
   },
 
   computed: {
     formattedTime() {
+      if(this.time === '') { return '' }
+
       return `${Math.floor(this.time / 60).toString().padStart(2, 0)}:${Math.abs(this.time % 60).toString().padStart(2, 0)}`
     }
   }
