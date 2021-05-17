@@ -55,6 +55,8 @@ export default new Vuex.Store({
         times[index] = time
       }
 
+      time.total = total(time.start, time.end)
+
       commit('setTimes', times)
     },
     
