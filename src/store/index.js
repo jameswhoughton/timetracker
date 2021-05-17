@@ -52,7 +52,7 @@ export default new Vuex.Store({
       const times = state.times
       
       if(times[index]) {
-        times[index] = time
+        Vue.set(times, index, time)
       }
 
       time.total = total(time.start, time.end)
