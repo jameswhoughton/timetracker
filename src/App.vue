@@ -25,7 +25,7 @@
             >Delete</Button>
           </time-row>
           <time-row 
-            :time="{ start, end, description }"
+            :time="{ start, end, description, total }"
             @change="setForm"
           >
             <Button 
@@ -99,6 +99,7 @@ export default {
       description: "",
       start: "",
       end: "",
+      total: 0,
     }
   },
 

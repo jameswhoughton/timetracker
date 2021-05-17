@@ -3,7 +3,7 @@
     <td><Input v-model="description" /></td>
     <td><Input type="time" v-model="start" /></td>
     <td><Input type="time" v-model="end" /></td>
-    <td><Time :time="total" /></td>
+    <td><Time :time="time.total" /></td>
     <td class="action">
         <slot>
 
@@ -32,6 +32,7 @@ export default {
           description: '',
           start: '',
           end: '',
+          total: 0,
         }
       },
     }
@@ -48,6 +49,13 @@ export default {
           start: this.start,
           end: this.end,
         })
+
+        if(this.start === '') {
+          const time = new Date()
+          const hours = time.getHours().toString().padStart(2, "0")
+          const minutes = time.getMinutes().toString().padStart(2, "0")
+          this.start = `${hours}:${minutes}`
+        }
       }
     },
 
@@ -76,17 +84,6 @@ export default {
         })
       }
     },
-    
-    total() {
-      if(!this.start && !this.end) { return ' '}
-      
-      const startTime = this.start.split(':');
-      const endTime = this.end.split(':');
-      const startTotal = parseInt(startTime[0] * 60) + parseInt(startTime[1]);
-      const endTotal = parseInt(endTime[0]) * 60 + parseInt(endTime[1]);
-      
-      return  endTotal - startTotal;
-    }
   },
 }
 </script>
