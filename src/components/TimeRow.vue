@@ -78,7 +78,7 @@ export default {
     },
     
     total() {
-      if(!this.state && !this.end) { return ' '}
+      if(!this.start && !this.end) { return ' '}
       
       const startTime = this.start.split(':');
       const endTime = this.end.split(':');
