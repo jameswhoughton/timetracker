@@ -14,9 +14,14 @@
         <tbody>
           <time-row 
             v-for="(time, index) in times" 
-            :key="`time-row-${index}`" 
-            :time="time" 
-            @change="val => $store.dispatch('updateTime', { index, time: val })"
+            :key="index"
+            :description="time.description"
+            @update:description="val => $store.dispatch('updateDescription', { index, description: val })"
+            :start="time.start"
+            @update:start="val => $store.dispatch('updateStart', { index, start: val })"
+            :end="time.end"
+            @update:end="val => $store.dispatch('updateEnd', { index, end: val })"
+            :total="time.total"
           >
             <Button 
               variant="danger" 
@@ -25,8 +30,10 @@
             >Delete</Button>
           </time-row>
           <time-row 
-            :time="{ start, end, description, total }"
-            @change="setForm"
+            v-model:description="description"
+            v-model:start="start"
+            v-model:end="end"
+            :total="total"
           >
             <Button 
               v-show="start && !end" 
@@ -84,6 +91,7 @@ import Time from './components/Time'
 import Button from './components/Button'
 
 import { mapState, mapGetters } from 'vuex'
+import { total } from './helpers/time'
 
 export default {
   name: 'App',
@@ -99,7 +107,6 @@ export default {
       description: "",
       start: "",
       end: "",
-      total: 0,
     }
   },
 
@@ -112,7 +119,13 @@ export default {
     }),
 
     isValid() {
-      return this.description && this.start && this.end
+      return this.description !== '' && this.start !== '' && this.end !== ''
+    },
+
+    total() {
+      if(this.start === '' || this.end === '') { return 0 }
+      
+      return total(this.start, this.end)
     }
   },
 
@@ -150,25 +163,27 @@ export default {
       this.description = ""
     },
 
-    setForm(time) {
-      this.start = time.start
-      this.end = time.end
-      this.description = time.description
-    },
-
-    setNowTime(type) {
+    timeNow() {
       const time = new Date()
       const hours = time.getHours().toString().padStart(2, "0")
       const minutes = time.getMinutes().toString().padStart(2, "0")
 
-      this[type] = `${hours}:${minutes}`
+      return `${hours}:${minutes}`
     },
 
     stop() {
-      this.setNowTime('end')
+      this.end = this.timeNow()
       
       if(this.isValid) {
         this.addTime()
+      }
+    }
+  }, 
+
+  watch: {
+    description(val) {
+      if(val !== '' && this.start === '') {
+        this.start = this.timeNow()
       }
     }
   }

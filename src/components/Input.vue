@@ -4,6 +4,10 @@
 
 <script>
 export default {
+  name: 'Input',
+  
+  emits: ['update:modelValue'],
+  
   props: {
     type: {
       type: String,

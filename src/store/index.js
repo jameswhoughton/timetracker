@@ -1,4 +1,5 @@
 import Vuex from 'vuex'
+import { total, roundTime } from '@/helpers/time'
 
 export default Vuex.createStore({
   state: {
@@ -45,16 +46,32 @@ export default Vuex.createStore({
       commit('setTimes', times)
     },
 
-    updateTime({ state, commit }, { index, time }) {
-      const times = state.times
+    updateDescription({ state, commit }, { index, description }) {
+      if(state.times[index] === undefined) { return }
       
-      if(times[index]) {
-        Vue.set(times, index, time)
-      }
+      commit('setDescription', { index, description })
+    },
 
-      time.total = total(time.start, time.end)
+    updateStart({ state, commit }, { index, start }) {
+      if(state.times[index] === undefined) { return }
 
-      commit('setTimes', times)
+      commit('setStart', { index, start })
+
+      const time = state.times[index]
+      const totalTime = total(time.start, time.end)
+
+      commit('setTotal', { index, total: totalTime })
+    },
+
+    updateEnd({ state, commit }, { index, end }) {
+      if(state.times[index] === undefined) { return }
+      
+      commit('setEnd', { index, end })
+
+      const time = state.times[index]
+      const totalTime = total(time.start, time.end)
+
+      commit('setTotal', { index, total: totalTime })
     },
     
     deleteTime({ state, commit }, index) {
@@ -72,21 +89,21 @@ export default Vuex.createStore({
     setTimes(state, times) {
       state.times = times
     },
+
+    setDescription(state, { index, description }) {
+      state.times[index].description = description
+    },
+
+    setStart(state, { index, start }) {
+      state.times[index].start = start
+    },
+
+    setEnd(state, { index, end }) {
+      state.times[index].end = end
+    },
+
+    setTotal(state, { index, total }) {
+      state.times[index].total = total
+    },
   }
 })
-
-const total = (start, end) => {
-  const startTime = start.split(':')
-  const endTime = end.split(':')
-  const startTotal = parseInt(startTime[0] * 60) + parseInt(startTime[1])
-  const endTotal = parseInt(endTime[0]) * 60 + parseInt(endTime[1])
-  
-  return  endTotal - startTotal;
-}
-
-const roundTime = (time) => {
-  // Always round up for the first 15 mins.
-  if(time < 15) { return 15 }
-
-  return 15 * Math.round(time / 15);
-}
