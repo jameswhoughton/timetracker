@@ -1,4 +1,5 @@
-import { createApp, h } from 'vue';
+import { createApp, h } from 'vue'
+import VueClipboard from 'vue3-clipboard'
 import store from './store'
 
 import App from './App.vue'
@@ -7,7 +8,7 @@ store.subscribe((mutation, state) => {
   window.localStorage.setItem('times', JSON.stringify(state.times));
 })
 
-createApp({
+const app = createApp({
   render: () => h(App),
 
   beforeCreate() {
@@ -15,4 +16,12 @@ createApp({
 
     this.$store.commit('setTimes', times)
 	}
-}).use(store).mount('#app')
+})
+
+app.use(store)
+app.use(VueClipboard, {
+  autoSetContainer: true,
+  appendToBody: true,
+})
+
+app.mount('#app')

@@ -62,7 +62,10 @@
         </thead>
         <tbody>
           <tr v-for="(total, description) in roundedTotals" :key="`total-${description}`">
-            <td>{{ description }}</td>
+            <td 
+              class="copy"
+              v-clipboard:copy="description"
+            >{{ description }}</td>
             <td><Time :time="total.total" /></td>
             <td><Time :time="total.rounded" /></td>
           </tr>
@@ -177,7 +180,7 @@ export default {
       if(this.isValid) {
         this.addTime()
       }
-    }
+    },
   }, 
 
   watch: {
@@ -240,5 +243,18 @@ th {
 
 tfoot td {
   font-weight: 700;
+}
+
+.copy {
+  transition: color 0.2s linear;
+  cursor: pointer;
+}
+
+.copy:hover {
+  color: #aaa;
+}
+
+.copy:active {
+  color: #eee;
 }
 </style>
