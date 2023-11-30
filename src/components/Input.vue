@@ -17,30 +17,8 @@ const model: WritableComputedRef<string> = computed({
 </script>
 
 <template>
-  <input :type="type" :value="model" @input="$emit('update:modelValue', $event.target.value)" />
+  <input :type="type" :value="model" />
 </template>
-
-<script>
-export default {
-  name: 'Input',
-
-  emits: ['update:modelValue'],
-
-  props: {
-    type: {
-      type: String,
-      default: 'text',
-      validator(value) {
-        return value.match(/(text|time)/)
-      }
-    },
-
-    modelValue: {
-      default: '',
-    }
-  },
-}
-</script>
 
 <style scoped>
 input {
