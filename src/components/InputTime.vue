@@ -10,6 +10,8 @@ const emits = defineEmits<{
 }>()
 
 const toMinutes = (time: string): number => {
+  if (time === '') return 0
+  
   const parts = time.split(':')
   const hours = parseInt(parts[0])
   const minutes = parseInt(parts[1])

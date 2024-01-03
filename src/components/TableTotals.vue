@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, type ComputedRef } from 'vue'
+import { useClipboard } from '@vueuse/core'
 
 import { type Row } from '@/App.vue'
 
@@ -37,6 +38,8 @@ const totals: ComputedRef<Total[]> = computed<Total[]>(() => {
 const grandTotal: ComputedRef<number> = computed<number>(() => {
     return totals.value.reduce((t: number, n: Total) =>  t + n.value, 0)
 })
+
+const { copy } = useClipboard()
 </script>
 
 <template>
@@ -50,7 +53,9 @@ const grandTotal: ComputedRef<number> = computed<number>(() => {
         </thead>
         <tbody>
             <tr v-for="(total, i) in totals" :key="`total-${i}`">
-                <td class="p-2 copy" v-clipboard:copy="total.description">{{ total.description }}</td>
+                <td class="p-2">
+                    <button class="hover:bg-gray-700 px-1 rounded-md" @click="copy(total.description)">{{ total.description }}</button>
+                </td>
                 <td class="p-2">{{ minutesToString(total.value) }}</td>
                 <td class="p-2">{{ roundTime(total.value) }}</td>
             </tr>

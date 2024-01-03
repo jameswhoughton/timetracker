@@ -61,10 +61,10 @@ watch(description, (v: string) => {
 </script>
 
 <template>
-  <div class="flex gap-3 self-start">
+  <form class="flex gap-3 self-start" @submit.prevent="add">
     <InputText v-model="description" />
     <InputTime v-model="start" />
     <InputTime v-model="end" />
-    <button class="px-4 py-2 bg-teal-500 rounded-md disabled:opacity-50 disabled:bg-teal-500 hover:bg-teal-600" @click="add" :disabled="isDisabled">add</button>
-  </div>
+    <button class="px-4 py-2 bg-teal-500 rounded-md disabled:opacity-50 disabled:bg-teal-500 hover:bg-teal-600" type="submit" :disabled="isDisabled">add</button>
+  </form>
 </template>
