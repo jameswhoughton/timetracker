@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import { ref, type Ref, type ComputedRef, computed, watch } from 'vue'
+import { ref, type Ref, type ComputedRef, type WritableComputedRef, computed, watch } from 'vue'
 
 import InputTime from './InputTime.vue'
 import InputText from './InputText.vue'
 import { type Row } from '../App.vue'
 
 const props = defineProps<{
-  description: string,
+  modelValue: string,
 }>()
-
-const description: Ref<string> = ref<string>(props.description)
-const start: Ref<number> = ref<number>(0)
-const end: Ref<number> = ref<number>(0)
 
 const emits = defineEmits<{
   (e: 'add-row', v: Row): void
+  (e: 'update:modelValue', v: string): void
 }>()
 
+const description: WritableComputedRef<string> = computed<string>({
+  get: () => props.modelValue,
+  set: (v: string) => emits('update:modelValue', v),
+})
+const start: Ref<number> = ref<number>(0)
+const end: Ref<number> = ref<number>(0)
+
 const isDisabled: ComputedRef<boolean> = computed<boolean>(() => {
-  // If any fields are empty
-  if (description.value === '' || start.value === 0 || end.value === 0) {
+  // If description or start fields are empty
+  if (description.value === '' || start.value === 0) {
     return true
   }
 
   // If start is after or equal to end
-  if (start.value >= end.value) {
+  if (end.value !== 0 && start.value >= end.value) {
     return true
   }
 
@@ -38,6 +42,10 @@ const reset = () => {
 }
 
 const add = () => {
+  if (end.value === 0) {
+    end.value = nowInMinutes()
+  }
+  
   emits('add-row', {
     description: description.value,
     start: start.value,
@@ -47,14 +55,15 @@ const add = () => {
   reset()
 }
 
-watch(() => props.description, (v: string) => {
-  description.value = v
-})
+const nowInMinutes = (): number => {
+  const now = new Date
+  
+  return now.getHours() * 60 + now.getMinutes()
+}
 
 watch(description, (v: string) => {
   if (start.value === 0 && v !== '') {
-    const now = new Date
-    start.value = now.getHours() * 60 + now.getMinutes()
+    start.value = nowInMinutes()
   }
 })
 

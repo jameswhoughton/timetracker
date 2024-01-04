@@ -18,12 +18,16 @@ const emits = defineEmits<{
 }>()
 
 const rows: WritableComputedRef<Row[]> = computed<Row[]>({
-    get: (): Row[] => props.modelValue,
-    set: (val: Row[]) => emits('update:model-value', val)
+    get: (): Row[] => [...props.modelValue].reverse(),
+    set: (val: Row[]) => emits('update:model-value', val.reverse())
 })
 
 const removeRow =  (i: number) => {
-    rows.value.splice(i)
+    const newRows = [...rows.value]
+
+    newRows.splice(i)
+    
+    rows.value = newRows
 }
 </script>
 
