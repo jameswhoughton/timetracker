@@ -25,8 +25,8 @@ const rows: WritableComputedRef<Row[]> = computed<Row[]>({
 const removeRow =  (i: number) => {
     const newRows = [...rows.value]
 
-    newRows.splice(i)
-    
+    newRows.splice(i, 1)
+
     rows.value = newRows
 }
 </script>
