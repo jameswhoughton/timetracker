@@ -4,7 +4,7 @@ import { useClipboard } from '@vueuse/core'
 
 import { type Row } from '@/App.vue'
 
-import { roundTime, minutesToString } from '@/helpers/time'
+import { roundMinutes, minutesToString } from '@/helpers/time'
 
 type Total = {
     description: string,
@@ -39,6 +39,10 @@ const grandTotal: ComputedRef<number> = computed<number>(() => {
     return totals.value.reduce((t: number, n: Total) =>  t + n.value, 0)
 })
 
+const roundedTotal: ComputedRef<number> = computed<number>(() => {
+    return totals.value.reduce((t: number, n: Total) =>  t + roundMinutes(n.value), 0)
+})
+
 const { copy } = useClipboard()
 </script>
 
@@ -57,14 +61,14 @@ const { copy } = useClipboard()
                     <button class="hover:bg-gray-700 px-1 rounded-md" @click="copy(total.description)">{{ total.description }}</button>
                 </td>
                 <td class="p-2">{{ minutesToString(total.value) }}</td>
-                <td class="p-2">{{ roundTime(total.value) }}</td>
+                <td class="p-2">{{ minutesToString(roundMinutes(total.value)) }}</td>
             </tr>
         </tbody>
         <tfoot v-show="totals.length > 0" class="font-weight-bold">
             <tr class="font-bold border-t border-gray-500">
                 <td class="p-2">Total</td>
                 <td class="p-2">{{ minutesToString(grandTotal) }}</td>
-                <td class="p-2">{{ roundTime(grandTotal) }}</td>
+                <td class="p-2">{{ minutesToString(roundedTotal) }}</td>
             </tr>
         </tfoot>
     </table>
